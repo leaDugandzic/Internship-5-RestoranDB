@@ -73,3 +73,15 @@ CREATE TABLE Ratings (
     FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE,
     FOREIGN KEY (order_id) REFERENCES Orders (id) ON DELETE CASCADE
 );
+
+
+SELECT dish_name, price FROM Menu WHERE price < 15;
+
+SELECT * FROM Orders WHERE EXTRACT(YEAR FROM order_date) = 2023 AND total_price > 50;
+
+SELECT first_name, last_name, COUNT(*) AS delivery_count 
+FROM Staff
+JOIN Orders ON Staff.id = Orders.restaurant_id
+WHERE role = 'Delivery Person'
+GROUP BY Staff.id
+HAVING COUNT(*) > 100;
