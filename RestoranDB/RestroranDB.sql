@@ -74,6 +74,10 @@ CREATE TABLE Ratings (
     FOREIGN KEY (order_id) REFERENCES Orders (id) ON DELETE CASCADE
 );
 
+COPY Restaurants (id, name, city, capacity, working_hours)
+FROM './MOCK_DATA.csv'
+DELIMITER ','
+CSV HEADER;
 
 SELECT dish_name, price FROM Menu WHERE price < 15;
 
@@ -85,3 +89,28 @@ JOIN Orders ON Staff.id = Orders.restaurant_id
 WHERE role = 'Delivery Person'
 GROUP BY Staff.id
 HAVING COUNT(*) > 100;
+
+SELECT first_name, last_name 
+FROM Staff
+JOIN Restaurants ON Staff.restaurant_id = Restaurants.id
+WHERE role = 'Chef' AND Restaurants.city = 'Zagreb';
+
+SELECT Restaurants.name, COUNT(Orders.id) AS order_count
+FROM Orders
+JOIN Restaurants ON Orders.restaurant_id = Restaurants.id
+WHERE Restaurants.city = 'Split' AND EXTRACT(YEAR FROM order_date) = 2023
+GROUP BY Restaurants.name;
+
+SELECT Menu.dish_name, COUNT(Order_Dish.dish_id) AS order_count
+FROM Order_Dish
+JOIN Menu ON Order_Dish.dish_id = Menu.id
+JOIN Orders ON Order_Dish.order_id = Orders.id
+WHERE Menu.category = 'Dessert' AND EXTRACT(MONTH FROM Orders.order_date) = 12 
+  AND EXTRACT(YEAR FROM Orders.order_date) = 2023
+GROUP BY Menu.dish_name
+HAVING COUNT(Order_Dish.dish_id) > 10;
+
+SELECT COUNT(Orders.id) AS order_count
+FROM Orders
+JOIN Users ON Orders.user_id = Users.id
+WHERE Users.last_name LIKE 'M%';
